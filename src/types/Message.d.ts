@@ -1,4 +1,4 @@
-export default interface Message {
+export interface Message {
   update_id: number;
   message_id: number;
   from: From;
@@ -7,7 +7,7 @@ export default interface Message {
   text: string;
 }
 
-interface From {
+export interface From {
   id: number;
   is_bot: boolean;
   first_name: string;
