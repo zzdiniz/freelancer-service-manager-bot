@@ -3,22 +3,19 @@ import TelegramBot, { CallbackQuery } from "node-telegram-bot-api";
 import { Message } from "./types/Message";
 import Bot from "./types/Bot";
 import getBotById from "./services/getBotById";
-import getServicesByProviderId from "./services/getServicesbyProviderId";
 import getClientById from "./services/getClientById";
 import addClient from "./services/addClient";
 import addConversation from "./services/addConversation";
 import getConversation from "./services/getConversation";
 import getProviderById from "./services/getProviderById";
-import updateConversation from "./services/updateConversation";
-import getAvailableDates from "./services/getAvailableDates";
-import addAppointment from "./services/addAppointment";
 import handleInitialMessage from "./handlers/handleInitialMessage";
 import handleServiceSelection from "./handlers/handleServiceSelection";
 import handleDateSelection from "./handlers/handleDateSelection";
+import handleServiceRequest from "./handlers/handleServiceRequest";
 
 const app = express();
 const PORT = 5000;
-/*const ngrok_url = "https://1516-2804-14c-4e2-42d4-d4dc-b1ca-62b2-563b.ngrok-free.app";
+/*const ngrok_url = "https://899f-2804-14c-4e2-42d4-395f-f02a-48b2-e351.ngrok-free.app";
 //const ferrarezzo_url = "https://ferrarezzo.loca.lt"
 const almirtoken = "7315270892:AAEEX-DjOIIIssVfn1-QPYyhV7729YelfeU";
 const newbot = new TelegramBot(almirtoken)
@@ -79,6 +76,8 @@ app.post("/webhook/:id", async (req: Request, res: Response) => {
 
   const bot = new TelegramBot(botResponse.token, { polling: false });
 
+  console.log('conversation?.conversationState',conversation?.conversationState)
+
   if (!conversation || conversation.conversationState === "initial_message") {
     return await handleInitialMessage({
       client,
@@ -110,6 +109,10 @@ app.post("/webhook/:id", async (req: Request, res: Response) => {
       provider,
       res,
     });
+  }
+
+  if(conversation.conversationState === "service_request"){
+    return await handleServiceRequest({bot,chatId,clientId,provider})
   }
 
   return res.status(200).json({ message: `Id retornado: ${id}` });
