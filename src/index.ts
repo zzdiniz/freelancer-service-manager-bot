@@ -12,6 +12,7 @@ import handleInitialMessage from "./handlers/handleInitialMessage";
 import handleServiceSelection from "./handlers/handleServiceSelection";
 import handleDateSelection from "./handlers/handleDateSelection";
 import handleServiceRequest from "./handlers/handleServiceRequest";
+import handleOptionsAvailable from "./handlers/handleOptionsAvailable";
 
 const app = express();
 const PORT = 5000;
@@ -23,14 +24,12 @@ newbot.setWebHook(`${ngrok_url}/webhook/3`)*/
 app.use(express.json());
 
 app.post("/webhook/:id", async (req: Request, res: Response) => {
-  console.log("Webhook received");
+
   const { id } = req.params;
   const { message, callback_query } = req.body as {
     message?: Message;
     callback_query?: CallbackQuery;
   };
-
-  console.log("Request Data:", { message, callback_query });
 
   if (!id) {
     return res.status(422).json({ message: "Id not provided" });
@@ -76,7 +75,6 @@ app.post("/webhook/:id", async (req: Request, res: Response) => {
 
   const bot = new TelegramBot(botResponse.token, { polling: false });
 
-  console.log('conversation?.conversationState',conversation?.conversationState)
 
   if (!conversation || conversation.conversationState === "initial_message") {
     return await handleInitialMessage({
@@ -113,6 +111,10 @@ app.post("/webhook/:id", async (req: Request, res: Response) => {
 
   if(conversation.conversationState === "service_request"){
     return await handleServiceRequest({bot,chatId,clientId,provider})
+  }
+
+  if(conversation.conversationState === "options_available"){
+    return await handleOptionsAvailable({bot,callback_query,chatId,clientId,provider})
   }
 
   return res.status(200).json({ message: `Id retornado: ${id}` });

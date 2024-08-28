@@ -55,9 +55,6 @@ const handleServiceSelection = async ({
   // Verifique se a callbackData é válida e processe-a
   if (callbackData?.startsWith("service_")) {
     const serviceId = callbackData.split("_")[1];
-    console.log(callbackData);
-    // Você pode buscar detalhes do serviço ou prosseguir com a lógica desejada
-    console.log("providerId", providerId);
     const availableDates = await getAvailableDates(providerId);
     const dateOptions = availableDates.map((date) => [
       {
@@ -73,8 +70,6 @@ const handleServiceSelection = async ({
         inline_keyboard: limitedOptions,
       },
     };
-
-    console.log("available dates", availableDates);
     await updateConversation({
       providerId,
       clientId,

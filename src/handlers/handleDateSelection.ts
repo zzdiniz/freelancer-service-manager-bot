@@ -32,7 +32,6 @@ const handleDateSelection = async ({
       return bot.sendMessage(chatId, "Por favor, selecione uma data válida!");
     }
     const defaultdate = (appointment.date as string).split(" ")[0].split("-");
-    console.log("defaultDate", defaultdate);
     const providerId = provider.id;
 
     if (!providerId) {
@@ -55,7 +54,6 @@ const handleDateSelection = async ({
       conversationState: "service_request",
     });
 
-    console.log("appointment", appointment);
   } catch (error) {
     console.error("Error parsing callback_query.data", error);
     await bot.sendMessage(

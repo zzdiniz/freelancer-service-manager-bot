@@ -10,7 +10,6 @@ interface HandleServiceRequestProps{
 } 
 
 const handleServiceRequest = async ({bot,chatId,clientId,provider}:HandleServiceRequestProps) =>{
-    console.log('rodou handle service request')
     const conversationOptions = [
         [
             {
