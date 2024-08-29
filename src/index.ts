@@ -16,11 +16,11 @@ import handleOptionsAvailable from "./handlers/handleOptionsAvailable";
 
 const app = express();
 const PORT = 5000;
-/*const ngrok_url = "https://899f-2804-14c-4e2-42d4-395f-f02a-48b2-e351.ngrok-free.app";
+const ngrok_url = "https://9280-2804-14c-4e2-42d4-ccc-1dac-1e2a-a1e2.ngrok-free.app";
 //const ferrarezzo_url = "https://ferrarezzo.loca.lt"
 const almirtoken = "7315270892:AAEEX-DjOIIIssVfn1-QPYyhV7729YelfeU";
 const newbot = new TelegramBot(almirtoken)
-newbot.setWebHook(`${ngrok_url}/webhook/3`)*/
+newbot.setWebHook(`${ngrok_url}/webhook/3`)
 app.use(express.json());
 
 app.post("/webhook/:id", async (req: Request, res: Response) => {

@@ -4,8 +4,5 @@ export default interface Service{
     description: string;
     price: number;
     providerId: number;
-    faq?:{
-        question: string;
-        response: string;
-    }[]
+    faq?:string
 }
