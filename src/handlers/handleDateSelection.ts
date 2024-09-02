@@ -22,7 +22,7 @@ const handleDateSelection = async ({
   res,
 }: HandleDateSelectionProps) => {
   if (!callback_query || !callback_query.data) {
-    res.status(422).json({ message: "Callbackquery not found" });
+    return bot.sendMessage(chatId,'por favor selecione uma das opções anteriores')
   }
 
   try {
@@ -35,7 +35,7 @@ const handleDateSelection = async ({
     const providerId = provider.id;
 
     if (!providerId) {
-      return res.status(422).json({ message: "Missing provider id" });
+      return console.error("Missing provider id")
     }
 
     await addAppointment({

@@ -1,9 +1,10 @@
-import TelegramBot, { CallbackQuery } from "node-telegram-bot-api";
+import TelegramBot, { CallbackQuery, Message } from "node-telegram-bot-api";
 import Provider from "../types/Provider";
 import getLatestAppointment from "../services/getLatestAppointment";
 import updateAppointmentStatus from "../services/updateAppointment";
 import getServiceById from "../services/getServiceById";
 import updateConversation from "../services/updateConversation";
+import sendMessageRequest from "../services/sendMessageRequest";
 
 interface HandleOptionsAvailableProps {
   bot: TelegramBot;
@@ -11,6 +12,7 @@ interface HandleOptionsAvailableProps {
   clientId: number;
   provider: Provider;
   callback_query: CallbackQuery | undefined;
+  message: Message | undefined
 }
 
 const handleOptionsAvailable = async ({
@@ -19,8 +21,9 @@ const handleOptionsAvailable = async ({
   clientId,
   provider,
   callback_query,
+  message
 }: HandleOptionsAvailableProps) => {
-  if (!callback_query) {
+  if (!callback_query && !message) {
     return bot.sendMessage(
       chatId,
       "Por favor selecione uma das opções disponíveis para que possamos continuar"
@@ -30,7 +33,7 @@ const handleOptionsAvailable = async ({
     provider.id as number,
     clientId
   );
-  if (callback_query.data === "cancel_appointment") {
+  if (callback_query?.data === "cancel_appointment") {
     try {
       await updateAppointmentStatus({
         id: latestAppointment.id,
@@ -46,7 +49,7 @@ const handleOptionsAvailable = async ({
       return bot.sendMessage(chatId, JSON.stringify(error));
     }
   }
-  if (callback_query.data === "faq_request") {
+  if (callback_query?.data === "faq_request") {
 
     try {
       const service = await getServiceById(
@@ -63,9 +66,24 @@ const handleOptionsAvailable = async ({
       return bot.sendMessage(chatId, JSON.stringify(error));
     }
   }
+
+  if(callback_query?.data === 'human_response__request'){
+    return bot.sendMessage(chatId,'O que gostaria de perguntar?',{
+      reply_markup: {
+        force_reply: true,
+      }
+    })
+  }
+  if(message){
+    try {
+      await sendMessageRequest({providerId:provider.id,clientId,message:message.text})
+    } catch (error) {
+      return
+    }
+  }
   return bot.sendMessage(
     chatId,
-    `voce selecionou a opção${callback_query.data}`
+    `voce selecionou a opção${callback_query?.data}`
   );
 };
 

@@ -1,6 +1,5 @@
 import express, { Request, Response } from "express";
-import TelegramBot, { CallbackQuery } from "node-telegram-bot-api";
-import { Message } from "./types/Message";
+import TelegramBot, { CallbackQuery, Message} from "node-telegram-bot-api";
 import Bot from "./types/Bot";
 import getBotById from "./services/getBotById";
 import getClientById from "./services/getClientById";
@@ -16,76 +15,23 @@ import handleOptionsAvailable from "./handlers/handleOptionsAvailable";
 
 const app = express();
 const PORT = 5000;
-const ngrok_url = "https://9280-2804-14c-4e2-42d4-ccc-1dac-1e2a-a1e2.ngrok-free.app";
+
+/*const ngrok_url = "https://83f5-2804-14c-4e2-42d4-f1c-2511-b7a7-6fef.ngrok-free.app";
 //const ferrarezzo_url = "https://ferrarezzo.loca.lt"
 const almirtoken = "7315270892:AAEEX-DjOIIIssVfn1-QPYyhV7729YelfeU";
-const newbot = new TelegramBot(almirtoken)
-newbot.setWebHook(`${ngrok_url}/webhook/3`)
+const newbot = new TelegramBot(almirtoken,{polling:false})
+newbot.setWebHook(`${ngrok_url}/webhook/3`)*/
 app.use(express.json());
 
-app.post("/webhook/:id", async (req: Request, res: Response) => {
+app.post("/webhook/:id",handleInitialMessage, async (req: Request, res: Response) => {
 
-  const { id } = req.params;
-  const { message, callback_query } = req.body as {
-    message?: Message;
-    callback_query?: CallbackQuery;
-  };
-
-  if (!id) {
-    return res.status(422).json({ message: "Id not provided" });
-  }
-
-  const botResponse: Bot = await getBotById(parseInt(id));
-  if (!botResponse) {
-    return res.status(404).json({ message: "Bot not found" });
-  }
-
-  const clientId = message?.from?.id ?? callback_query?.message?.chat?.id;
-  const chatId = message?.from?.id ?? callback_query?.message?.chat?.id;
-
-  if (!clientId || !chatId) {
-    return res.status(400).json({ message: "Invalid client or chat ID" });
-  }
-
-  const client = await getClientById(clientId);
-  const providerId = botResponse.providerId;
-  const provider = await getProviderById(providerId);
-
-  if (!client) {
-    const name =
-      message?.from?.first_name ??
-      (callback_query?.message?.chat.first_name as string);
-    const username =
-      message?.from?.username ??
-      (callback_query?.message?.chat.username as string);
-
-    await addClient({ id: clientId, name, username });
-  }
-
-  let conversation = await getConversation(providerId, clientId);
-
-  if (!conversation) {
-    await addConversation({
-      providerId,
-      clientId,
-      conversationState: "initial_message",
-    });
-    conversation = await getConversation(providerId, clientId);
-  }
-
-  const bot = new TelegramBot(botResponse.token, { polling: false });
-
-
-  if (!conversation || conversation.conversationState === "initial_message") {
-    return await handleInitialMessage({
-      client,
-      clientId,
-      provider,
-      bot,
-      chatId,
-      res,
-    });
-  }
+  const clientId = res.locals.clientId
+  const provider = res.locals.provider
+  const bot = res.locals.bot
+  const chatId = res.locals.chatId
+  const callback = res.locals.callback_query
+  const conversation = res.locals.conversation
+  const message = res.locals.message
 
   if (conversation.conversationState === "service_selection") {
     return await handleServiceSelection({
@@ -93,7 +39,7 @@ app.post("/webhook/:id", async (req: Request, res: Response) => {
       provider,
       bot,
       chatId,
-      callback_query,
+      callback_query:callback,
       res,
     });
   }
@@ -101,7 +47,7 @@ app.post("/webhook/:id", async (req: Request, res: Response) => {
   if (conversation.conversationState === "date_selection") {
     return await handleDateSelection({
       bot,
-      callback_query,
+      callback_query:callback,
       chatId,
       clientId,
       provider,
@@ -114,10 +60,8 @@ app.post("/webhook/:id", async (req: Request, res: Response) => {
   }
 
   if(conversation.conversationState === "options_available"){
-    return await handleOptionsAvailable({bot,callback_query,chatId,clientId,provider})
+    return await handleOptionsAvailable({bot,callback_query:callback,chatId,clientId,provider,message})
   }
-
-  return res.status(200).json({ message: `Id retornado: ${id}` });
 });
 
 app.listen(PORT, () => {

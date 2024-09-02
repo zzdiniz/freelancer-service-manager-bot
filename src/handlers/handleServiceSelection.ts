@@ -25,7 +25,7 @@ const handleServiceSelection = async ({
   const providerId = provider.id;
 
   if (!providerId) {
-    return res.status(422).json({ message: "Missing provider id" });
+    return console.error("Missing provider id")
   }
 
   const services = await getServicesByProviderId(providerId);
@@ -47,7 +47,7 @@ const handleServiceSelection = async ({
       "Por favor selecione um serviço para que possamos continuar",
       serviceOptions
     );
-    return res.status(200).json({ message: "Message sent" });
+    return
   }
 
   const callbackData = callback_query.data;
@@ -80,7 +80,7 @@ const handleServiceSelection = async ({
       `Perfeito! Agora por favor selecione a uma data e horário detre as opções a seguir:`,
       options
     );
-    return res.status(200).json({ message: "Dates sent" });
+    return
   }
 };
 

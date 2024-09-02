@@ -5,6 +5,7 @@ export interface Message {
   chat: Chat;
   date: number;
   text: string;
+  reply_markup?: any
 }
 
 export interface From {
