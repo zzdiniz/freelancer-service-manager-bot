@@ -1,87 +1,82 @@
-import TelegramBot, { CallbackQuery } from "node-telegram-bot-api";
-import Provider from "../types/Provider";
 import getAvailableDates from "../services/getAvailableDates";
-import { Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import getServicesByProviderId from "../services/getServicesbyProviderId";
 import updateConversation from "../services/updateConversation";
 
-interface HandleServiceSelectionProps {
-  provider: Provider;
-  bot: TelegramBot;
-  clientId: number;
-  chatId: number;
-  res: Response;
-  callback_query: CallbackQuery | undefined;
-}
+const handleServiceSelection = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const clientId = res.locals.clientId;
+  const bot = res.locals.bot;
+  const chatId = res.locals.chatId;
+  const callback_query = res.locals.callback_query;
+  const conversation = res.locals.conversation;
 
-const handleServiceSelection = async ({
-  clientId,
-  provider,
-  bot,
-  chatId,
-  res,
-  callback_query,
-}: HandleServiceSelectionProps) => {
-  const providerId = provider.id;
+  if (conversation.conversationState === "service_selection") {
+    const providerId = res.locals.provider.id;
 
-  if (!providerId) {
-    return console.error("Missing provider id")
-  }
+    if (!providerId) {
+      return console.error("Missing provider id");
+    }
 
-  const services = await getServicesByProviderId(providerId);
+    const services = await getServicesByProviderId(providerId);
 
-  const inlineKeyboard = services.map((service) => ({
-    text: `${service.name} - R$${service.price}`,
-    callback_data: `service_${service.id}`,
-  }));
+    const inlineKeyboard = services.map((service) => ({
+      text: `${service.name} - R$${service.price}`,
+      callback_data: `service_${service.id}`,
+    }));
 
-  const serviceOptions = {
-    reply_markup: {
-      inline_keyboard: [inlineKeyboard],
-    },
-  };
-
-  if (!callback_query) {
-    await bot.sendMessage(
-      chatId,
-      "Por favor selecione um serviço para que possamos continuar",
-      serviceOptions
-    );
-    return
-  }
-
-  const callbackData = callback_query.data;
-
-  // Verifique se a callbackData é válida e processe-a
-  if (callbackData?.startsWith("service_")) {
-    const serviceId = callbackData.split("_")[1];
-    const availableDates = await getAvailableDates(providerId);
-    const dateOptions = availableDates.map((date) => [
-      {
-        text: `${date.split(" ")[0].split("-").join("/")} às ${
-          date.split(" ")[1]
-        }`,
-        callback_data: JSON.stringify({ date, serviceId }),
-      },
-    ]);
-    const limitedOptions = dateOptions.slice(0, 5);
-    const options = {
+    const serviceOptions = {
       reply_markup: {
-        inline_keyboard: limitedOptions,
+        inline_keyboard: [inlineKeyboard],
       },
     };
-    await updateConversation({
-      providerId,
-      clientId,
-      conversationState: "date_selection",
-    });
-    await bot.sendMessage(
-      chatId,
-      `Perfeito! Agora por favor selecione a uma data e horário detre as opções a seguir:`,
-      options
-    );
-    return
+
+    if (!callback_query) {
+      await bot.sendMessage(
+        chatId,
+        "Por favor selecione um serviço para que possamos continuar",
+        serviceOptions
+      );
+      return;
+    }
+
+    const callbackData = callback_query.data;
+
+    // Verifique se a callbackData é válida e processe-a
+    if (callbackData?.startsWith("service_")) {
+      const serviceId = callbackData.split("_")[1];
+      const availableDates = await getAvailableDates(providerId);
+      const dateOptions = availableDates.map((date) => [
+        {
+          text: `${date.split(" ")[0].split("-").join("/")} às ${
+            date.split(" ")[1]
+          }`,
+          callback_data: JSON.stringify({ date, serviceId }),
+        },
+      ]);
+      const limitedOptions = dateOptions.slice(0, 5);
+      const options = {
+        reply_markup: {
+          inline_keyboard: limitedOptions,
+        },
+      };
+      await updateConversation({
+        providerId,
+        clientId,
+        conversationState: "date_selection",
+      });
+      await bot.sendMessage(
+        chatId,
+        `Perfeito! Agora por favor selecione a uma data e horário detre as opções a seguir:`,
+        options
+      );
+      return;
+    }
   }
+  next();
 };
 
 export default handleServiceSelection;

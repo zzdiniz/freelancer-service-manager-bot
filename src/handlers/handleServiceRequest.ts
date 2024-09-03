@@ -1,56 +1,62 @@
-import TelegramBot from "node-telegram-bot-api";
 import updateConversation from "../services/updateConversation";
-import Provider from "../types/Provider";
+import { NextFunction, Request, Response } from "express";
 
-interface HandleServiceRequestProps{
-    bot: TelegramBot;
-    chatId: number;
-    clientId: number;
-    provider: Provider;
-} 
+const handleServiceRequest = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const clientId = res.locals.clientId;
+  const provider = res.locals.provider;
+  const bot = res.locals.bot;
+  const chatId = res.locals.chatId;
+  const conversation = res.locals.conversation;
 
-const handleServiceRequest = async ({bot,chatId,clientId,provider}:HandleServiceRequestProps) =>{
+  if (conversation.conversationState === "service_request") {
     const conversationOptions = [
-        [
-            {
-                text: 'Consultar dúvidas frequentes(faq)',
-                callback_data: 'faq_request'
-            }
-        ],
-        [
-            {
-                text: 'Enviar pergunta diretamente ao prestador',
-                callback_data: 'human_response__request'
-            }
-        ],
-        [
-            {
-                text: 'Cancelar agendamento',
-                callback_data: 'cancel_appointment'
-            }
-        ]
-    ]
+      [
+        {
+          text: "Consultar dúvidas frequentes(faq)",
+          callback_data: "faq_request",
+        },
+      ],
+      [
+        {
+          text: "Enviar pergunta diretamente ao prestador",
+          callback_data: "human_response__request",
+        },
+      ],
+      [
+        {
+          text: "Cancelar agendamento",
+          callback_data: "cancel_appointment",
+        },
+      ],
+    ];
 
     const options = {
-        reply_markup: {
-          inline_keyboard: conversationOptions,
-        },
+      reply_markup: {
+        inline_keyboard: conversationOptions,
+      },
     };
 
-    const message = "Olá, essas são as opções que você tem nesse momento. Vale ressaltar que, se você deseja enviar uma mensagem diretamente para o prestador, talvez seja interessante verificar se sua dúvida não foi respondida na sessão 'dúvidas frequentes'"
+    const message =
+      "Olá, essas são as opções que você tem nesse momento. Vale ressaltar que, se você deseja enviar uma mensagem diretamente para o prestador, talvez seja interessante verificar se sua dúvida não foi respondida na sessão 'dúvidas frequentes'";
 
-    await bot.sendMessage(
-        chatId,
-        message,
-        options
-      );
+    await bot.sendMessage(chatId, message, options);
 
     const providerId = provider.id;
-    if(!providerId){
-        return
+    if (!providerId) {
+      return;
     }
-    
-    await updateConversation({clientId,conversationState:'options_available',providerId})
-}
 
-export default handleServiceRequest
+    await updateConversation({
+      clientId,
+      conversationState: "options_available",
+      providerId,
+    });
+  }
+  next();
+};
+
+export default handleServiceRequest;

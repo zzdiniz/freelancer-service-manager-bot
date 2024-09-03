@@ -1,6 +1,4 @@
 import TelegramBot, { CallbackQuery, Message } from "node-telegram-bot-api";
-import Client from "../types/Client";
-import Provider from "../types/Provider";
 import getServicesByProviderId from "../services/getServicesbyProviderId";
 import updateConversation from "../services/updateConversation";
 import { NextFunction, Request, Response } from "express";
@@ -11,14 +9,6 @@ import getBotById from "../services/getBotById";
 import getClientById from "../services/getClientById";
 import getConversation from "../services/getConversation";
 import getProviderById from "../services/getProviderById";
-interface HandleInitialMessageProps {
-  client: Client | undefined;
-  provider: Provider;
-  bot: TelegramBot;
-  clientId: number;
-  chatId: number;
-  res: Response;
-}
 
 const handleInitialMessage = async (
   req: Request,
