@@ -17,12 +17,14 @@ const handleOptionsAvailable = async (
   const callback_query = res.locals.callback_query;
   const conversation = res.locals.conversation;
   const message = res.locals.message;
+  const options = res.locals.options
 
   if (conversation.conversationState === "options_available") {
-    if (!callback_query && !message) {
+    if (!callback_query) {
       return bot.sendMessage(
         chatId,
-        "Por favor selecione uma das opções disponíveis para que possamos continuar"
+        "Por favor selecione uma das opções disponíveis para que possamos continuar",
+        options
       );
     }
     const latestAppointment = await getLatestAppointment(

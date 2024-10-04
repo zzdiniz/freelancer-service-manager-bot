@@ -9,6 +9,7 @@ import getBotById from "../services/getBotById";
 import getClientById from "../services/getClientById";
 import getConversation from "../services/getConversation";
 import getProviderById from "../services/getProviderById";
+import getBotByProviderId from "../services/getBotByProviderId";
 
 const handleInitialMessage = async (
   req: Request,
@@ -25,10 +26,11 @@ const handleInitialMessage = async (
     res.status(200).send("ok");
   }
   if (!id) {
-    return console.error("Bot id not provided");
+    return console.error("Provider id not provided");
   }
 
-  const botResponse: Bot = await getBotById(parseInt(id));
+  const botResponse: Bot = await getBotByProviderId(parseInt(id));
+
   if (!botResponse) {
     return console.error("Bot not found");
   }
