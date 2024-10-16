@@ -16,6 +16,7 @@ const handleInitialMessage = async (
   res: Response,
   next: NextFunction
 ) => {
+
   const { id } = req.params;
   const { message, callback_query } = req.body as {
     message?: Message;
@@ -46,15 +47,24 @@ const handleInitialMessage = async (
   const providerId = botResponse.providerId;
   const provider = await getProviderById(providerId);
 
-  if (!client) {
+  const bot = new TelegramBot(botResponse.token, { polling: false });
+
+  if (!client.id) {
+
     const name =
       message?.from?.first_name ??
       (callback_query?.message?.chat.first_name as string);
+
     const username =
       message?.from?.username ??
       (callback_query?.message?.chat.username as string);
 
-    await addClient({ id: clientId, name, username });
+    await addClient({ id: clientId, name, username: username ?? '' });
+    const messageFormatted = `Olá, tudo bem? É um prazer te conhecer! Sou o bot do ${provider.name}. Como posso te ajudar?`;
+
+    await bot.sendMessage(chatId,messageFormatted);
+
+    return
   }
 
   let conversation = await getConversation(providerId, clientId);
@@ -68,8 +78,6 @@ const handleInitialMessage = async (
     conversation = await getConversation(providerId, clientId);
   }
 
-  const bot = new TelegramBot(botResponse.token, { polling: false });
-
   res.locals.clientId = clientId;
   res.locals.provider = provider;
   res.locals.chatId = chatId;
@@ -79,14 +87,7 @@ const handleInitialMessage = async (
   res.locals.bot = bot;
 
   if (!conversation || conversation.conversationState === "initial_message") {
-    const messageFormatted = `
-    Olá ${
-      client?.name || ""
-    }, tudo bem? É um prazer te conhecer! Sou o bot do ${
-      provider.name
-    } e irei te ajudar no processo de escolher qual serviço você necessita.
-    A seguir estão listados os serviços que oferecemos:
-  `;
+    const messageFormatted = `${client?.name.concat(", ") || ""}a seguir estão listados os serviços que oferecemos:`;
 
     const services = await getServicesByProviderId(providerId);
 

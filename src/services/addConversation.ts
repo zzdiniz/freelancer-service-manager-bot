@@ -15,6 +15,7 @@ const addConversation = async ({
     }
   );
   const data = await response.json();
+
   if (!response.ok) {
     throw new Error(`Failed to add client: ${response.statusText}`);
   }

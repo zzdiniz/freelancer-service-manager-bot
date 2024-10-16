@@ -17,7 +17,6 @@ const sendMessageRequest = async ({
   );
   const data = await response.json();
   if (!response.ok) {
-    console.log(`Failed to send request: ${response.statusText}`)
     throw new Error(`Failed to send request: ${response.statusText}`);
   }
 
