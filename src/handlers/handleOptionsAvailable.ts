@@ -17,10 +17,12 @@ const handleOptionsAvailable = async (
   const callback_query = res.locals.callback_query;
   const conversation = res.locals.conversation;
   const message = res.locals.message;
+
   const options = res.locals.options
 
   if (conversation.conversationState === "options_available") {
-    if (!callback_query) {
+
+    if (!callback_query && message?.reply_to_message?.text !=="O que gostaria de perguntar?") {
       return bot.sendMessage(
         chatId,
         "Por favor selecione uma das opções disponíveis para que possamos continuar",
