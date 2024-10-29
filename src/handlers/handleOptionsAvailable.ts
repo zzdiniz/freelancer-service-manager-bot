@@ -49,7 +49,9 @@ const handleOptionsAvailable = async (
         return bot.sendMessage(chatId, JSON.stringify(error));
       }
     }
+
     if (callback_query?.data === "faq_request") {
+
       try {
         const service = await getServiceById(
           latestAppointment.serviceId as number
@@ -67,7 +69,7 @@ const handleOptionsAvailable = async (
 
         return bot.sendMessage(chatId, faq.toString());
       } catch (error) {
-        return bot.sendMessage(chatId, JSON.stringify(error));
+        return bot.sendMessage(chatId, "faq não encontrado");
       }
     }
 
