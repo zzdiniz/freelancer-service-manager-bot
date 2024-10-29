@@ -9,7 +9,7 @@ import TelegramBot from "node-telegram-bot-api";
 const app = express();
 const PORT = 5000;
 //ngrok http http://localhost:5000
-/*const ngrok_url = "https://8a5d-2804-14c-4e2-42d4-159e-5db0-4b2-bd91.ngrok-free.app";
+/*const ngrok_url = "https://b1ec-2804-14c-4e2-42d4-d030-2971-ef95-aa28.ngrok-free.app";
 const ferrarezzo_url = "https://ferrarezzo.loca.lt"
 const almirtoken = "7315270892:AAEEX-DjOIIIssVfn1-QPYyhV7729YelfeU";
 const leveneToken = "7545404995:AAECIB4OZlKLyBfu8P8ctLLzKbP2Pbb7fvw"

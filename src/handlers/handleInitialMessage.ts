@@ -10,6 +10,7 @@ import getClientById from "../services/getClientById";
 import getConversation from "../services/getConversation";
 import getProviderById from "../services/getProviderById";
 import getBotByProviderId from "../services/getBotByProviderId";
+import addReview from "../services/addReview";
 
 const handleInitialMessage = async (
   req: Request,
@@ -85,7 +86,14 @@ const handleInitialMessage = async (
   res.locals.conversation = conversation;
   res.locals.message = message;
   res.locals.bot = bot;
+  if (callback_query?.data?.startsWith("rating_")){
+    const data = callback_query.data.split(":")
+    const content = data[0]
+    const appointmentId =data[1]
+    const review = content.split("_")[1]
 
+    await addReview(parseInt(appointmentId),parseInt(review))
+  }
   if (!conversation || conversation.conversationState === "initial_message") {
     const messageFormatted = `${client?.name.concat(", ") || ""}a seguir estão listados os serviços que oferecemos:`;
 
