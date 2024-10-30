@@ -1,4 +1,6 @@
 import Appointment from "../types/Appointment";
+import dotenv from "dotenv";
+dotenv.config();
 
 const addAppointment = async ({ datetime,providerId,serviceId,clientId,status}: Appointment): Promise<void> => {
 

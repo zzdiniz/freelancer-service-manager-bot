@@ -1,4 +1,6 @@
 import Client from "../types/Client";
+import dotenv from "dotenv";
+dotenv.config();
 
 const addClient = async ({ id, name, username }: Client): Promise<void> => {
 

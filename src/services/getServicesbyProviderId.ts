@@ -1,4 +1,6 @@
 import Service from "../types/Service";
+import dotenv from "dotenv";
+dotenv.config();
 
 const getServicesByProviderId = async (id: number): Promise<Service[]> => {
   const response = await fetch(

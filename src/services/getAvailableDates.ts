@@ -1,3 +1,5 @@
+import dotenv from "dotenv";
+dotenv.config();
 
 const getAvailableDates = async (providerId: number): Promise<string[]> => {
   const response = await fetch(`${process.env.BASE_URL}appointment/get-available-dates?providerId=${providerId}`);

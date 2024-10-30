@@ -1,4 +1,6 @@
 import Appointment from "../types/Appointment";
+import dotenv from "dotenv";
+dotenv.config();
 
 const getLatestAppointment = async (providerId: number,clientId: number): Promise<Appointment> => {
   const response = await fetch(

@@ -1,3 +1,5 @@
+import dotenv from "dotenv";
+dotenv.config();
 
 const addReview = async (appointmentId:number,review:number): Promise<void> => {
 

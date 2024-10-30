@@ -1,4 +1,6 @@
 import MessageRequest from "../types/MessageRequest";
+import dotenv from "dotenv";
+dotenv.config();
 
 const sendMessageRequest = async ({
   providerId,

@@ -1,4 +1,6 @@
 import Conversation from "../types/Conversation";
+import dotenv from "dotenv";
+dotenv.config();
 
 const addConversation = async ({
   providerId,
