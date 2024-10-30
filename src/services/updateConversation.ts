@@ -6,7 +6,7 @@ const updateConversation = async ({
   conversationState
 }: Partial<Conversation>): Promise<void> => {
   const response = await fetch(
-    `http://localhost:3000/client/update-conversation`,
+    `${process.env.BASE_URL}client/update-conversation`,
     {
       method: "PATCH",
       headers: {

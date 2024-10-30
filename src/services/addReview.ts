@@ -1,7 +1,7 @@
 
 const addReview = async (appointmentId:number,review:number): Promise<void> => {
 
-  const response = await fetch(`http://localhost:3000/appointment/add-review`, {
+  const response = await fetch(`${process.env.BASE_URL}appointment/add-review`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",

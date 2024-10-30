@@ -5,7 +5,7 @@ const addConversation = async ({
   clientId,
 }: Partial<Conversation>): Promise<void> => {
   const response = await fetch(
-    `http://localhost:3000/client/create-conversation`,
+    `${process.env.BASE_URL}client/create-conversation`,
     {
       method: "POST",
       headers: {

@@ -2,7 +2,7 @@ import Client from "../types/Client";
 
 const addClient = async ({ id, name, username }: Client): Promise<void> => {
 
-  const response = await fetch(`http://localhost:3000/client/create`, {
+  const response = await fetch(`${process.env.BASE_URL}client/create`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

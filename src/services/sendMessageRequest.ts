@@ -6,7 +6,7 @@ const sendMessageRequest = async ({
   message
 }: Partial<MessageRequest>): Promise<void> => {
   const response = await fetch(
-    `http://localhost:3000/provider/send-message-request`,
+    `${process.env.BASE_URL}provider/send-message-request`,
     {
       method: "POST",
       headers: {

@@ -5,7 +5,7 @@ const updateAppointmentStatus = async ({
   status,
 }: Partial<Appointment>): Promise<void> => {
   const response = await fetch(
-    `http://localhost:3000/appointment/update-status`,
+    `${process.env.BASE_URL}appointment/update-status`,
     {
       method: "PATCH",
       headers: {

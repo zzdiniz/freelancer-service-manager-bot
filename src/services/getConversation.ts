@@ -5,7 +5,7 @@ const getConversation = async (
   clientId: number
 ): Promise<Conversation | undefined> => {
   const response = await fetch(
-    `http://localhost:3000/client/get-conversation/?providerId=${providerId}&clientId=${clientId}`
+    `${process.env.BASE_URL}client/get-conversation/?providerId=${providerId}&clientId=${clientId}`
   );
   if (response.status !== 200) {
     return undefined;

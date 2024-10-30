@@ -1,7 +1,7 @@
 import Bot from "../types/Bot";
 
 const getBotById = async (id: number): Promise<Bot> => {
-  const response = await fetch(`http://localhost:3000/bot/get-by-id/${id}`);
+  const response = await fetch(`${process.env.BASE_URL}bot/get-by-id/${id}`);
   return await response.json();
 };
 

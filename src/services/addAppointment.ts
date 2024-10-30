@@ -2,7 +2,7 @@ import Appointment from "../types/Appointment";
 
 const addAppointment = async ({ datetime,providerId,serviceId,clientId,status}: Appointment): Promise<void> => {
 
-  const response = await fetch(`http://localhost:3000/appointment/add`, {
+  const response = await fetch(`${process.env.BASE_URL}appointment/add`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
