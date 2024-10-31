@@ -24,16 +24,15 @@ const handleInitialMessage = async (
     callback_query?: CallbackQuery;
   };
 
-  if (message || callback_query) {
-    res.status(200).send("ok");
-  }
   if (!id) {
+    res.status(200).send("Provider id not provided");
     return console.error("Provider id not provided");
   }
 
   const botResponse: Bot = await getBotByProviderId(parseInt(id));
 
   if (!botResponse) {
+    res.status(200).send("Bot not found");
     return console.error("Bot not found");
   }
 
@@ -41,6 +40,7 @@ const handleInitialMessage = async (
   const chatId = message?.from?.id ?? callback_query?.message?.chat?.id;
 
   if (!clientId || !chatId) {
+    res.status(200).send("Invalid client or chat ID");
     return console.error("Invalid client or chat ID");
   }
 
@@ -64,10 +64,10 @@ const handleInitialMessage = async (
     const messageFormatted = `Olá, tudo bem? É um prazer te conhecer! Sou o bot do ${provider.name}. Como posso te ajudar?`;
 
     await bot.sendMessage(chatId,messageFormatted);
-
+    res.status(200).send("Initial message flow");
     return
   }
-
+  res.status(200).send("Other flow");
   let conversation = await getConversation(providerId, clientId);
 
   if (!conversation) {
