@@ -17,7 +17,9 @@ app.post(
   handleDateSelection,
   handleServiceRequest,
   handleOptionsAvailable,
-  async (req: Request, res: Response) => {}
+  async (req: Request, res: Response) => {
+    return res.status(200).send("end of the line");
+  }
 );
 
 app.listen(PORT, () => {

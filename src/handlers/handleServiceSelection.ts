@@ -18,7 +18,9 @@ const handleServiceSelection = async (
     const providerId = res.locals.provider.id;
 
     if (!providerId) {
-      return console.error("Missing provider id");
+      console.error("Missing provider id");
+      res.status(200).send("Missing provider id at service selection");
+      return
     }
 
     const services = await getServicesByProviderId(providerId);
@@ -40,6 +42,7 @@ const handleServiceSelection = async (
         "Por favor selecione um serviço para que possamos continuar",
         serviceOptions
       );
+      res.status(200).send("Missing callback in service selection");
       return;
     }
 
@@ -73,6 +76,7 @@ const handleServiceSelection = async (
         `Perfeito! Agora por favor selecione a uma data e horário detre as opções a seguir:`,
         options
       );
+      res.status(200).send("Service selected");
       return;
     }
   }

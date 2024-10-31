@@ -23,11 +23,13 @@ const handleOptionsAvailable = async (
   if (conversation.conversationState === "options_available") {
 
     if (!callback_query && message?.reply_to_message?.text !=="O que gostaria de perguntar?") {
-      return bot.sendMessage(
+      bot.sendMessage(
         chatId,
         "Por favor selecione uma das opções disponíveis para que possamos continuar",
         options
       );
+      res.status(200).send("Missing query on options available");
+      return
     }
     const latestAppointment = await getLatestAppointment(
       provider.id as number,
@@ -44,9 +46,13 @@ const handleOptionsAvailable = async (
           clientId,
           conversationState: "initial_message",
         });
-        return bot.sendMessage(chatId, "Serviço cancelado");
+        bot.sendMessage(chatId, "Serviço cancelado");
+        res.status(200).send("Service canceled");
+        return
       } catch (error) {
-        return bot.sendMessage(chatId, JSON.stringify(error));
+        bot.sendMessage(chatId, "erro ao tentar cancelar serviço");
+        res.status(200).send("Error trying to cancel service");
+        return
       }
     }
 
@@ -67,18 +73,24 @@ const handleOptionsAvailable = async (
             })
           : "faq não encontrado";
 
-        return bot.sendMessage(chatId, faq.toString());
+        bot.sendMessage(chatId, faq.toString());
+        res.status(200).send("Faq sent");
+        return
       } catch (error) {
-        return bot.sendMessage(chatId, "faq não encontrado");
+        bot.sendMessage(chatId, "faq não encontrado");
+        res.status(200).send("Error trying to get faq");
+        return
       }
     }
 
     if (callback_query?.data === "human_response__request") {
-      return bot.sendMessage(chatId, "O que gostaria de perguntar?", {
+      bot.sendMessage(chatId, "O que gostaria de perguntar?", {
         reply_markup: {
           force_reply: true,
         },
       });
+      res.status(200).send("Human response reply");
+      return
     }
     if (message) {
       try {
@@ -87,7 +99,10 @@ const handleOptionsAvailable = async (
           clientId,
           message: message.text,
         });
+        res.status(200).send("send message request");
+        return
       } catch (error) {
+        res.status(200).send("Error trying to send message request");
         return;
       }
     }

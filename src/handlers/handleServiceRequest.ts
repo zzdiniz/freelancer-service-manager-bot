@@ -57,6 +57,8 @@ const handleServiceRequest = async (
       conversationState: "options_available",
       providerId,
     });
+    res.status(200).send("Options available");
+    return
   }
   next();
 };

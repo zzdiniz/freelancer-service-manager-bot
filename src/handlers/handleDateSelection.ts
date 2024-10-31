@@ -16,23 +16,29 @@ const handleDateSelection = async (
 
   if (conversation.conversationState === "date_selection") {
     if (!callback_query || !callback_query.data) {
-      return bot.sendMessage(
+      bot.sendMessage(
         chatId,
         "por favor selecione uma das opções anteriores"
       );
+      res.status(200).send("No callback query");
+      return
     }
 
     try {
       const appointment = JSON.parse(callback_query?.data as string);
 
       if (!appointment.date || !appointment.serviceId) {
-        return bot.sendMessage(chatId, "Por favor, selecione uma data válida!");
+        bot.sendMessage(chatId, "Por favor, selecione uma data válida!");
+        res.status(200).send("Date not selected");
+        return
       }
       const defaultdate = (appointment.date as string).split(" ")[0].split("-");
       const providerId = provider.id;
 
       if (!providerId) {
-        return console.error("Missing provider id");
+        console.error("Missing provider id");
+        res.status(200).send("Missing provider id");
+        return
       }
 
       await addAppointment({
@@ -50,12 +56,16 @@ const handleDateSelection = async (
         clientId,
         conversationState: "service_request",
       });
+      res.status(200).send("Date selected");
+      return
     } catch (error) {
       console.error("Error parsing callback_query.data", error);
       await bot.sendMessage(
         chatId,
         "Erro ao processar sua seleção. Tente novamente."
       );
+      res.status(200).send("Date selected error");
+      return
     }
   }
   next();

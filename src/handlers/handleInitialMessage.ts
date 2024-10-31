@@ -64,10 +64,10 @@ const handleInitialMessage = async (
     const messageFormatted = `Olá, tudo bem? É um prazer te conhecer! Sou o bot do ${provider.name}. Como posso te ajudar?`;
 
     await bot.sendMessage(chatId,messageFormatted);
-    res.status(200).send("Initial message flow");
+    res.status(200).send("New client flow");
     return
   }
-  res.status(200).send("Other flow");
+
   let conversation = await getConversation(providerId, clientId);
 
   if (!conversation) {
@@ -86,6 +86,7 @@ const handleInitialMessage = async (
   res.locals.conversation = conversation;
   res.locals.message = message;
   res.locals.bot = bot;
+
   if (callback_query?.data?.startsWith("rating_")){
     const data = callback_query.data.split(":")
     const content = data[0]
@@ -93,6 +94,8 @@ const handleInitialMessage = async (
     const review = content.split("_")[1]
 
     await addReview(parseInt(appointmentId),parseInt(review))
+    res.status(200).send("Add review");
+    return
   }
   if (!conversation || conversation.conversationState === "initial_message") {
     const messageFormatted = `${client?.name.concat(", ") || ""}a seguir estão listados os serviços que oferecemos:`;
@@ -111,11 +114,13 @@ const handleInitialMessage = async (
     };
 
     await bot.sendMessage(chatId, messageFormatted, options);
+    
     await updateConversation({
       providerId,
       clientId,
       conversationState: "service_selection",
     });
+    res.status(200).send("Initial message");
     return;
   }
 
