@@ -56,8 +56,8 @@ const handleDateSelection = async (
         clientId,
         conversationState: "service_request",
       });
-      res.status(200).send("Date selected");
       bot.sendMessage(chatId,"Serviço agendado com sucesso")
+      res.status(200).send("Date selected");
       return
     } catch (error) {
       console.error("Error parsing callback_query.data", error);
