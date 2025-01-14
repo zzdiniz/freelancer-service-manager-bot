@@ -26,4 +26,3 @@ receber mensagens simultaneamente de diferentes clientes, a opção de polling t
 - NodeJS
 - Typescript
 - Express
-- MySql
